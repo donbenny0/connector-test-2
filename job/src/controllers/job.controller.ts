@@ -18,13 +18,23 @@ const folderName = process.env.S3_FOLDER_NAME || 'don';
 
 export const post = async (_request: Request, response: Response) => {
   try {
-    // Get today's date in YYYY-MM-DD format
-    const today = new Date().toISOString().split('T')[0];
-    const fileName = `${folderName}/orders_${today}.csv`;
+    // Get current date and time
+    const now = new Date();
 
-    // Get the orders for today
+    // Calculate the timestamp for 24 hours ago
+    const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+    // Format the current date-time for the filename
+    const dateTime = now.toISOString().replace(/[:T]/g, '_').split('.')[0];
+    const fileName = `${folderName}/orders_last_24h_${dateTime}.csv`;
+
+    // Format timestamps for the query
+    const endTime = now.toISOString();
+    const startTime = twentyFourHoursAgo.toISOString();
+
+    // Get the orders for the last 24 hours
     const orders = await allOrders({
-      where: `createdAt >= "${today}T00:00:00Z" and createdAt <= "${today}T23:59:59Z"`
+      where: `createdAt >= "${startTime}" and createdAt <= "${endTime}"`
     });
 
     // Extract order IDs
@@ -36,8 +46,8 @@ export const post = async (_request: Request, response: Response) => {
     // Upload CSV to AWS S3
     await uploadCSVToS3(csvContent, fileName);
 
-    logger.info(`Orders for ${today} have been written to ${fileName} in S3 bucket ${bucketName}`);
-    response.status(200).send(`Orders for ${today} have been written to ${fileName} in S3 bucket ${bucketName}`);
+    logger.info(`Orders from the last 24 hours have been written to ${fileName} in S3 bucket ${bucketName}`);
+    response.status(200).send(`Orders from the last 24 hours have been written to ${fileName} in S3 bucket ${bucketName}`);
   } catch (error) {
     logger.error('Error while fetching and uploading orders', error);
     throw new CustomError(

@@ -48,6 +48,16 @@ deployAs:
         - key: CTP_SCOPE
           description: commercetools Composable Commerce client scope
           required: true
+        - key: AWS_ACCESS_KEY_ID
+          description: commercetools Composable Commerce job URI
+          required: false
+        - key: AWS_SECRET_ACCESS_KEY
+          description: commercetools Composable Commerce job URI
+          required: false
+        - key: AWS_SESSION_TOKEN
+          description: commercetools Composable Commerce job URI
+          required: false
+
   - name: event
     applicationType: event
     endpoint: /event

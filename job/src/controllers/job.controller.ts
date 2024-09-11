@@ -13,8 +13,8 @@ AWS.config.update({
 });
 
 const s3 = new AWS.S3();
-const bucketName = process.env.S3_BUCKET_NAME || 'innovation-training-2024';
-const folderName = process.env.S3_FOLDER_NAME || 'don';
+const bucketName = 'innovation-training-2024';
+const folderName = 'don';
 
 export const post = async (_request: Request, response: Response) => {
   try {

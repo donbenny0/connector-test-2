@@ -13,11 +13,17 @@ import { logger } from '../utils/logger.utils';
  */
 export const post = async (request: Request, response: Response) => {
   try {
+    logger.info(`Success in event : ${request.body}`);
+
     response.json({ "message": request.body })
     response.status(200).send();
   } catch (error) {
+    logger.info(`Error in event : ${error}`);
+
+
     response.status(500);
     response.status(400).send();
+
     response.json({ "error": error })
   }
 };

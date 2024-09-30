@@ -12,18 +12,31 @@ import { logger } from '../utils/logger.utils';
  * @returns
  */
 export const post = async (request: Request, response: Response) => {
-  try {
-    logger.info(`Success in event : ${request.body}`);
+  logger.info("😊😊😊😊📌📌function Triggered!!")
+  let customerId = undefined;
 
-    response.json({ "message": request.body })
-    response.status(200).send();
-  } catch (error) {
-    logger.info(`Error in event : ${error}`);
-
-
-    response.status(500);
-    response.status(400).send();
-
-    response.json({ "error": error })
+  // Check request body
+  if (!request.body) {
+    logger.error('Missing request body.');
+    throw new CustomError(400, 'Bad request: No Pub/Sub message was received');
   }
+
+  // Check if the body comes in a message
+  if (!request.body.message) {
+    logger.error('Missing body message');
+    throw new CustomError(400, 'Bad request: Wrong No Pub/Sub message format');
+  }
+
+  // Receive the Pub/Sub message
+  const pubSubMessage = request.body.message;
+
+  // For our example we will use the customer id as a var
+  // and the query the commercetools sdk with that info
+
+  logger.info(`Message from event : ${pubSubMessage}`)
+
+
+
+  // Return the response for the client
+  response.status(204).send();
 };

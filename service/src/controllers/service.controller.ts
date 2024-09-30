@@ -13,46 +13,12 @@ import { cartController } from './cart.controller';
  * @returns
  */
 export const post = async (request: Request, response: Response) => {
-  // Deserialize the action and resource from the body
-  const { action, resource } = request.body;
-
-  if (!action || !resource) {
-    throw new CustomError(400, 'Bad request - Missing body parameters.');
-  }
-
-  // Identify the type of resource in order to redirect
-  // to the correct controller
-  switch (resource.typeId) {
-    case 'cart':
-      try {
-        const data = await cartController(action, resource);
-
-        if (data && data.statusCode === 200) {
-          apiSuccess(200, data.actions, response);
-          return;
-        }
-
-        throw new CustomError(
-          data ? data.statusCode : 400,
-          JSON.stringify(data)
-        );
-      } catch (error) {
-        if (error instanceof Error) {
-          throw new CustomError(500, error.message);
-        }
-      }
-
-      break;
-    case 'payment':
-      break;
-
-    case 'order':
-      break;
-
-    default:
-      throw new CustomError(
-        500,
-        `Internal Server Error - Resource not recognized. Allowed values are 'cart', 'payments' or 'orders'.`
-      );
+  try {
+    response.json({ "message": request.body })
+    response.status(200).send();
+  } catch (error) {
+    response.status(500);
+    response.status(400).send();
+    response.json({ "error": error })
   }
 };

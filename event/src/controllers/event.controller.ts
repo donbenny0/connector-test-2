@@ -14,8 +14,10 @@ import { logger } from '../utils/logger.utils';
 export const post = async (request: Request, response: Response) => {
   try {
     response.json({ "message": request.body })
+    response.status(200).send();
   } catch (error) {
     response.status(500);
+    response.status(400).send();
     response.json({ "error": error })
   }
 };
